@@ -1,0 +1,68 @@
+<div class="col-md-4 col-md-offset-4">
+  <div class="page-header">
+    <h1 class="text-center">register<small></small></h1>
+  </div>
+  <div class="row margin-top-md">
+    <form ng-controller="RegisterFormController as Register"
+          name="Register.Form"
+          ng-submit="Register.register()">
+
+       <!-- Error Messages -->
+      <div ng-messages="Register.Form.$error">
+        <div class="alert alert-danger alert-dismissible"
+          role="alert"
+          ng-message="authentication"
+          >
+          {{Register.Form.errorMessage}}
+        </div>
+      </div>
+
+             <!-- Success Message -->
+      <div ng-messages="Register.Form.$success">
+        <div class="alert alert-dismissible alert-success"
+          role="alert"
+          ng-message="authentication"
+          >
+          We sent an activation email to <strong>{{Register.Form.email}}</strong>. Click on the included link to confirm your email and gain access to the application.
+        </div>
+      </div>
+
+       <!-- email -->
+      <div class="form-group">
+        <input class="form-control margin-top-sm"
+        id="focusedInput"
+        type="text"
+        placeholder="email"
+        name="Email"
+        ng-model="Register.Form.email"
+        required/>
+
+        <!-- password -->
+        <input class="form-control margin-top-sm"
+        id="focusedInput"
+        type="password"
+        placeholder="password"
+        name="Password"
+        ng-model="Register.Form.password"
+        required/>
+
+        <!-- password confirmation -->
+        <input class="form-control margin-top-sm"
+        id="focusedInput"
+        type="password"
+        placeholder="password"
+        name="ConfirmationPassword"
+        ng-model="Register.Form.confirmationPassword"
+        required/>
+      </div>
+
+      <loading-indicator></loading-indicator>
+
+      <input class="btn btn-primary btn-lg btn-block"
+          type="submit"
+          value="Register"
+          required/>
+      <p class="text-center margin-top-sm">Already have an account ? <a ui-sref="home.login" class="text-info">Login.</a></p>
+    </div>
+  </form>
+</div>

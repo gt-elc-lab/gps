@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html ng-app='admin'>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+        <title>gps</title>
+        <!-- Bootswatch core CSS -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.5/journal/bootstrap.css">
+        <!-- Font Awesome CSS -->
+        <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-XdYbMnZ/QjLh6iI4ogqCTaIjrFk87ip+ekIjefZch0Y+PvJ8CDYtEs1ipDmPorQ+" crossorigin="anonymous">
+        <!-- Custom styles for this template -->
+        <link href="/css/style.css" rel="stylesheet">
+    </head>
+    <body>
+        <div class="container">
+            <div class="header clearfix">
+                <nav>
+                    <ul class="nav nav-pills pull-right">
+                    </ul>
+                </nav>
+                <h3 class="text-muted">Admin</h3>
+            </div>
+            <div>
+                <div class="col-md-8 col-md-offset-2">
+                    <ul class="nav nav-tabs margin-btm-lg">
+                        <li ui-sref-active="labeling"><a ui-sref="labeling">Labeling</a></li>
+                        <li><a>Usage Stats</a></li>
+                    </ul>
+                    <div ui-view>
+                    </div>
+                </div>
+            </div>
+            </div> <!-- /container -->
+        </body>
+        <script src="/js/admin.js"></script>
+    </html>

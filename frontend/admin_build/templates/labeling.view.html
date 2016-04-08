@@ -1,0 +1,16 @@
+<div class="page-header">
+  <h1 class="text-center">{{LabelingView.count}} posts labeled </h1>
+  <h3 class="text-center"> Page: {{LabelingView.page}}</h1>
+</div>
+<ul class="pager">
+  <li class="previous" ng-click="LabelingView.previous()"><a >&larr; Previous</a></li>
+  <li class="next" ng-click="LabelingView.next()"><a >Next &rarr;</a></li>
+</ul>
+
+<sample-card ng-repeat="sample in LabelingView.samples" sample="sample">
+        </sample-card>
+
+<ul class="pager">
+  <li class="previous" ng-click="LabelingView.previous()"><a >&larr; Previous</a></li>
+  <li class="next" ng-click="LabelingView.next()"><a >Next &rarr;</a></li>
+</ul>

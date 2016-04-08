@@ -1,0 +1,15 @@
+.show-white-space {
+    white-space: pre-wrap;
+}
+
+ .yes {
+    border: 3px solid #4caf50;
+}
+.no {
+    border: 3px solid #e51c23;
+}
+
+.neutral {
+    border: 3px solid #ff9800;
+}
+
