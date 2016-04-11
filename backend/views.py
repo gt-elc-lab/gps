@@ -3,6 +3,7 @@ import flask
 from flask.views import MethodView
 from flask.ext.httpauth import HTTPBasicAuth
 
+
 import config
 from models import User, Post, Conversation
 
@@ -36,8 +37,16 @@ class LoginView(MethodView):
         if not user.verify_password(password):
             return AuthenticationError('Incorrect password.')
         flask.g.user = user
+        flask.session['user_id'] = str(user.id)
         return flask.jsonify(make_user_response(user))
 
+class UserView(MethodView):
+
+
+     def get(self, _id):
+        user = User.objects.get(id=_id)
+        conversations = Conversation.objects(user=user)
+        return conversations.to_json()
 
 class RegisterView(MethodView):
 
@@ -55,10 +64,6 @@ class RegisterView(MethodView):
         user.hash_password(password)
         user.create_activation_token()
         user.save()
-        # mail = emailer.Emailer()
-        # message = config.PROD_ACTIVATION_LINK.format(_id=str(user.id), token=user.activation_token)
-        # thr = Thread(target=mail.send_text, args=[[user.email], message])
-        # thr.start()
         return flask.jsonify(make_user_response(user))
 
 
@@ -71,7 +76,9 @@ class RefreshTokenView(MethodView):
 class PostView(MethodView):
 
     def get(self, r_id):
-        posts = Post.objects(resolved=False).order_by('-created')[:10].to_json()
+        if r_id:
+            return Post.objects.exclude('content').get(r_id=r_id).to_json()
+        posts = Post.objects(accepted=False).order_by('-created')[:10].to_json()
         return flask.Response(posts,  mimetype='application/json')
 
     def post(self, r_id):
@@ -85,7 +92,18 @@ class ConversationView(MethodView):
     def post(self, r_id, user_id):
         user = User.objects.get(id=user_id)
         post = Post.objects.get(r_id=r_id)
-        conversation = Conversation(user, post)
+        conversation = Conversation()
+        conversation.user = user
+        conversation.post = post
+        post.accepted = True
+        post.save()
+        conversation.save()
+        return 'success'
+
+    def get(self, user_id):
+        completed = True if flask.request.args.get('completed') == 'true' else False
+        return Conversation.objects(user=user_id, completed=completed).to_json()
+
 
 
 

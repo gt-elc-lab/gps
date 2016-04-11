@@ -52,10 +52,11 @@ class Crawler(object):
     @staticmethod
     def post_from_praw_submission(submission):
         return models.Post(r_id=submission.id,
-                          url=submission.permalink,
-                          content=submission.selftext,
-                          title=submission.title,
-                          created=datetime.utcfromtimestamp(
+                           author = submission.author.name,
+                           url=submission.permalink,
+                           content=submission.selftext,
+                           title=submission.title,
+                           created=datetime.utcfromtimestamp(
                             submission.created_utc))
 
 def download_corpus():
@@ -73,8 +74,8 @@ def download_corpus():
 
 
 if __name__ == '__main__':
-    # Crawler(SimpleClassifier()).run()
-    download_corpus()
+    Crawler(SimpleClassifier()).run()
+    # download_corpus()
     # samples = models.Sample.objects(label__exists=True)
     # print test_classifier(SimpleClassifier(), samples)
 

@@ -39,17 +39,24 @@ api.add_url_rule('/login',
 api.add_url_rule('/token',
     view_func=views.RefreshTokenView.as_view('token_refresh_view'), methods=['GET'])
 
-post_view = auth.login_required(views.PostView.as_view('post_view'))
+post_view = views.PostView.as_view('post_view')
 api.add_url_rule('/post', defaults={'r_id': None},
     view_func=post_view, methods=['GET'])
+api.add_url_rule('/post/<string:r_id>', view_func=post_view, methods=['GET'])
 api.add_url_rule('/post/<string:r_id>', view_func=post_view,
     methods=['POST'])
 
-conversation_view = auth.login_required(views.ConversationView.as_view('conversation_view'))
-api.add_url_rule('/conversation', defaults={'_id': None},
+conversation_view = views.ConversationView.as_view('conversation_view')
+api.add_url_rule('/conversation/<string:user_id>',
     view_func=conversation_view, methods=['GET'])
+
 api.add_url_rule('/conversation/<string:r_id>/<string:user_id>', view_func=conversation_view,
     methods=['POST'])
+
+
+
+user_view = views.UserView.as_view('user_view')
+api.add_url_rule('/user/<string:_id>', view_func=user_view, methods=['GET'])
 
 
 

@@ -2,6 +2,7 @@
     <div class="panel-heading">{{vm.date}}</div>
     <div class="panel-body">
         <a ng-href="{{post.url}}" target="_blank"><h3>{{post.title}}</h3></a>
+        <p>by <a ng-href="https://www.reddit.com/user/{{post.author}}" target="_blank">{{post.author}}</a></p>
         <p class="show-white-space">{{post.content | limitTo:300}}....<a ng-href="{{post.url}}" target="_blank"> view on reddit</a></p>
         <ng-messages for="messages">
             <div

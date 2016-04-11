@@ -1,6 +1,8 @@
 <div class="header clearfix">
     <nav>
         <ul class="nav nav-pills pull-right">
+            <li ui-sref-active="active"><a ui-sref="app.feed">Feed</a></li>
+            <li ui-sref-active="active"><a ui-sref="app.conversations.open">Conversations</a></li>
             <li role="presentation" class=""><a>Logout</a></li>
         </ul>
     </nav>
@@ -8,11 +10,10 @@
 </div>
 <div>
     <div class="col-md-8 col-md-offset-2">
-        <ul class="nav nav-tabs margin-btm-lg">
+        <!-- <ul class="nav nav-tabs margin-btm-lg">
             <li ui-sref-active="active"><a ui-sref="app.feed">Feed</a></li>
             <li ui-sref-active="active"><a ui-sref="app.conversations">My Conversations</a></li>
-            <li ui-sref-active="active"><a ui-sref="app.settings">Settings</a></li>
-        </ul>
+        </ul> -->
         <div ui-view>
 
         </div>

@@ -14,7 +14,9 @@ gps
     .controller('RegisterFormController', RegisterFormController)
     .controller('AppViewController', AppViewController)
     .controller('FeedViewController', FeedViewController)
-    .controllerAs('ConversationViewController', ConversationViewController)
+    .controller('ConversationViewController', ConversationViewController)
+    .controller('OpenConversationViewController', OpenConversationViewController)
+    .controller('CompletedConversationViewController', CompletedConversationViewController)
 
     .service('AuthenticationService', AuthenticationService)
     .service('CurrentUserService', CurrentUserService)
@@ -22,7 +24,8 @@ gps
     .service('ConversationResource', ConversationResource)
 
     .directive('httpLoadingIndicator', HTTPLoadingIndicator)
-    .directive('feedPostCard', FeedPostCard);
+    .directive('feedPostCard', FeedPostCard)
+    .directive('conversationCard', ConversationCard);
 
 gps.config(function($httpProvider, $stateProvider, $urlRouterProvider) {
 
@@ -68,7 +71,19 @@ gps.config(function($httpProvider, $stateProvider, $urlRouterProvider) {
             url:'/conversations',
             templateUrl: 'templates/conversations.html',
             controller: 'ConversationViewController',
-            controller: 'ConversationView'
+            controllerAs: 'ConversationView'
+        })
+        .state('app.conversations.open', {
+            url:'/open',
+            templateUrl: 'templates/open.html',
+            controller: 'OpenConversationViewController',
+            controllerAs: 'OpenConversationView'
+        })
+        .state('app.conversations.completed', {
+            url:'/completed',
+            templateUrl: 'templates/completed.html',
+            controller: 'CompletedConversationViewController',
+            controllerAs: 'CompetedConversationView'
         })
         .state('app.settings', {
             url: '/settings',
@@ -130,15 +145,29 @@ function ConversationViewController($state, PostResource) {
     this.posts = PostResource.query();
 }
 
+function CompletedConversationViewController() {
+
+}
+
+OpenConversationViewController.$inject = ['$state', '$http',
+    'ConversationResource', 'CurrentUserService'];
+function OpenConversationViewController($state, $http, ConversationResource,
+    CurrentUserService) {
+    var currentUser = CurrentUserService.getCurrentUser();
+    this.conversations = ConversationResource.query({user_id: currentUser.id,
+        completed: false});
+}
+
 function CurrentUserService() {
     var currentUser = null;
 
     this.getCurrentUser = function() {
-        return currentUser;
+        return currentUser ? currentUser: {email: "danimashaun3@gatech.edu",
+            id: "56e8dca0ea2fc232e32b492e"};
     };
 
     this.setCurrentUser = function(user) {
-        this.currentUser = user;
+        currentUser = user;
     };
 }
 
@@ -240,12 +269,6 @@ function FeedPostCard($state, ConversationResource, CurrentUserService) {
             };
 
 
-            $scope.show = function() {
-                var fn = $scope.textPrompt == showMoreText ? showMore : showLess;
-                fn();
-                return;
-            };
-
             $scope.discard = function() {
                 $scope.post.$delete().then(function(response) {
                     $scope.$destroy();
@@ -254,14 +277,10 @@ function FeedPostCard($state, ConversationResource, CurrentUserService) {
                 })
             };
 
-            $scope.reply = function() {
-                $state.go('main.reply', {_id: $scope.post._id, post: $scope.post});
-                return;
-            };
 
             $scope.accept = function() {
                 var conversation = new ConversationResource({r_id: $scope.post._id,
-                    user_id: null});
+                    user_id: currentUser.id});
                 conversation.$save().then(function(response) {
 
                 }, function(error) {
@@ -291,4 +310,21 @@ function ConversationResource($resource) {
             isArray: true
         }
     });
+}
+
+ConversationCard.$inject = ['$state', 'CurrentUserService', 'PostResource'];
+function ConversationCard($state, CurrentUserService, PostResource) {
+    return {
+        scope: {
+            conversation: '='
+        },
+        restrict: 'AE',
+        templateUrl: 'templates/conversationcard.html',
+        link: function($scope, $element, $attrs) {
+            $scope.vm = {};
+            $scope.post = PostResource.get({_id: $scope.conversation.post})
+            $scope.vm.date = moment($scope.conversation.started.$date)
+                .format("dddd, MMMM Do, h:mm a");
+        }
+    }
 }

@@ -1,3 +1,4 @@
+import bson
 from mongoengine import *
 from passlib.apps import custom_app_context as pwd_context
 import passlib.utils
@@ -12,9 +13,11 @@ connect(host=config.TEST_DB_URI)
 class Post(Document):
     r_id = StringField(primary_key=True)
     url = StringField()
+    author = StringField()
     title = StringField()
     content = StringField()
-    resolved = BooleanField(default=False)
+    accepted = BooleanField(default=False)
+    completed = BooleanField(default=False)
     discarded = BooleanField(default=False)
     created = DateTimeField()
 
@@ -55,14 +58,12 @@ class User(Document):
 
 class Conversation(Document):
 
-    user = ReferenceField('user')
-    post = ReferenceField('post')
+    user = ReferenceField('User')
+    post = ReferenceField('Post')
+    completed = BooleanField(default=False)
     started = DateTimeField(default=datetime.datetime.now)
     ended = DateTimeField()
 
-    def __init__(user, post):
-        self.user = user
-        self.post = post
 
 class Sample(Document):
     r_id = StringField(primary_key=True)
