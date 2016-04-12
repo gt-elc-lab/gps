@@ -77,7 +77,7 @@ class PostView(MethodView):
 
     def get(self, r_id):
         if r_id:
-            return Post.objects.exclude('content').get(r_id=r_id).to_json()
+            return Post.objects.get(r_id=r_id).to_json()
         posts = Post.objects(accepted=False).order_by('-created')[:10].to_json()
         return flask.Response(posts,  mimetype='application/json')
 
@@ -100,9 +100,17 @@ class ConversationView(MethodView):
         conversation.save()
         return 'success'
 
-    def get(self, user_id):
+    def put(self, _id):
+        request = flask.request.get_json()
+        conversation = Conversation.objects.get(id=request['_id']['$oid'])
+        conversation.completed = request['completed']
+        conversation.save()
+        return flask.jsonify(**request)
+
+    def get(self, _id):
+        # the _id parameter is actually the user_id
         completed = True if flask.request.args.get('completed') == 'true' else False
-        return Conversation.objects(user=user_id, completed=completed).to_json()
+        return Conversation.objects(user=_id, completed=completed).to_json()
 
 
 

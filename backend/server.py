@@ -47,8 +47,7 @@ api.add_url_rule('/post/<string:r_id>', view_func=post_view,
     methods=['POST'])
 
 conversation_view = views.ConversationView.as_view('conversation_view')
-api.add_url_rule('/conversation/<string:user_id>',
-    view_func=conversation_view, methods=['GET'])
+api.add_url_rule('/conversation/<string:_id>', view_func=conversation_view, methods=['GET', 'PUT'])
 
 api.add_url_rule('/conversation/<string:r_id>/<string:user_id>', view_func=conversation_view,
     methods=['POST'])

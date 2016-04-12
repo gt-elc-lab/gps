@@ -1,5 +1,6 @@
 <div class="panel panel-default disabled">
-    <div class="panel-heading">{{vm.date}}</div>
+    <div class="panel-heading">
+        {{post.created.$date | date:"EEEE, MMMM d, h:mm a"}}</div>
     <div class="panel-body">
         <a ng-href="{{post.url}}" target="_blank"><h3>{{post.title}}</h3></a>
         <p>by <a ng-href="https://www.reddit.com/user/{{post.author}}" target="_blank">{{post.author}}</a></p>
@@ -25,7 +26,7 @@
                 Oops. Looks like someone already accepted this message.
             </div>
         </ng-messages>
-        <a class="btn btn-default" ng-click="accept()">Accept</a>
+        <a class="btn btn-info" ng-click="accept()">Accept</a>
         <a class="btn btn-danger" ng-click="showMessage('discard')">Discard</a>
     </div>
 </div>

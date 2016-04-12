@@ -1,4 +1,7 @@
 <conversation-card
     ng-repeat="conversation in OpenConversationView.conversations"
-    conversation="conversation">
+    conversation="conversation" data-completed="false">
 </conversation-card>
+<div ng-show="!OpenConversationView.conversations.length">
+    <h3 class="text-center">Hmm...looks like there's nothing here</h3>
+</div>

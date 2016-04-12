@@ -28,6 +28,7 @@ gps
     .directive('feedPostCard', FeedPostCard)
     .directive('conversationCard', ConversationCard);
 
+
 gps.config(function($httpProvider, $stateProvider, $urlRouterProvider) {
 
     $httpProvider.interceptors.push(function() {
@@ -84,13 +85,14 @@ gps.config(function($httpProvider, $stateProvider, $urlRouterProvider) {
             url:'/completed',
             templateUrl: 'templates/completed.html',
             controller: 'CompletedConversationViewController',
-            controllerAs: 'CompetedConversationView'
+            controllerAs: 'CompletedConversationView'
         })
         .state('app.settings', {
             url: '/settings',
             templateUrl: '/templates/settings.html'
         });
 });
+
 
 
 HomeViewController.$inject = ['$state'];
@@ -146,14 +148,19 @@ function ConversationViewController($state, PostResource) {
     this.posts = PostResource.query();
 }
 
-function CompletedConversationViewController() {
-
+CompletedConversationViewController.$inject = ['ConversationResource',
+'CurrentUserService'];
+function CompletedConversationViewController(ConversationResource,
+        CurrentUserService) {
+    var currentUser = CurrentUserService.getCurrentUser();
+    this.conversations = ConversationResource.query({user_id: currentUser.id,
+        completed: true});
 }
 
 OpenConversationViewController.$inject = ['$state', '$http',
     'ConversationResource', 'CurrentUserService'];
 function OpenConversationViewController($state, $http, ConversationResource,
-    CurrentUserService) {
+        CurrentUserService) {
     var currentUser = CurrentUserService.getCurrentUser();
     this.conversations = ConversationResource.query({user_id: currentUser.id,
         completed: false});
@@ -163,8 +170,8 @@ function CurrentUserService() {
     var currentUser = null;
 
     this.getCurrentUser = function() {
-        return currentUser ? currentUser: {email: "danimashaun3@gatech.edu",
-            id: "56e8dca0ea2fc232e32b492e"};
+        return currentUser ? currentUser :
+            {email: "t@test.com", id: "5706fb490dfb5e37fd1304a0"}
     };
 
     this.setCurrentUser = function(user) {
@@ -210,7 +217,6 @@ function HTTPLoadingIndicator($http) {
     return  {
         restrict: 'AE',
         templateUrl: 'templates/http-loading-indicator.html',
-
         link: function($scope, $element, $attrs) {
             $scope.isLoading = isLoading;
             $scope.$watch($scope.isLoading, toggleElement);
@@ -228,7 +234,7 @@ function HTTPLoadingIndicator($http) {
               return $http.pendingRequests.length > 0;
             }
         }
-    }
+    };
 }
 
 
@@ -309,23 +315,52 @@ function ConversationResource($resource) {
         { query: {
             method: 'GET',
             isArray: true
-        }
+        },
+         update: {
+            method: 'PUT'
+         }
     });
 }
 
-ConversationCard.$inject = ['$state', 'CurrentUserService', 'PostResource'];
-function ConversationCard($state, CurrentUserService, PostResource) {
+ConversationCard.$inject = ['$state', 'CurrentUserService', 'PostResource',
+    'ConversationResource'];
+function ConversationCard($state, CurrentUserService, PostResource,
+    ConversationResource) {
     return {
         scope: {
             conversation: '='
         },
         restrict: 'AE',
-        templateUrl: 'templates/conversationcard.html',
+        templateUrl: function($element, $attr) {
+            console.log($attr);
+            if ($attr.completed === 'false') {
+                return 'templates/conversationcard.html'
+            }
+            return 'templates/closedconversationcard.html'
+        },
         link: function($scope, $element, $attrs) {
-            $scope.vm = {};
-            $scope.post = PostResource.get({_id: $scope.conversation.post})
-            $scope.vm.date = moment($scope.conversation.started.$date)
-                .format("dddd, MMMM Do, h:mm a");
+            $scope.messages = {
+                success: false
+            };
+
+            $scope.post = PostResource.get({_id: $scope.conversation.post});
+
+            $scope.complete = function() {
+                $scope.conversation.completed = true;
+                ConversationResource.update(
+                    {r_id: $scope.conversation._id.$oid},
+                    $scope.conversation)
+                .$promise.then(function(response) {
+                    console.log(response);
+                }, function(error) {
+                    console.log(error);
+                });
+            };
+
+            $scope.reopen = function() {
+
+            }
+
         }
     }
 }
