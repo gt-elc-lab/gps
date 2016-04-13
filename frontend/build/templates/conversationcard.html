@@ -1,4 +1,4 @@
-<div class="panel panel-default disabled">
+<div class="panel panel-default">
     <div class="panel-heading">
         started
         <span class="text-info">
@@ -9,11 +9,13 @@
         <h4>{{post.title}}</h4>
         <p>by <a ng-href="https://www.reddit.com/user/{{post.author}}">{{post.author}}</a></p>
         <p class="show-white-space">{{post.content | limitTo:300}}....<a ng-href="{{post.url}}" target="_blank"> view on reddit</a></p>
+
          <ng-messages for="messages">
             <div
-                ng-message="success"
+                ng-message="completed"
                 class="alert alert-dismissible alert-success">
-                Excellent. This conversation is now marked as complete.
+                <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                 This conversation is now marked as complete.
             </div>
         </ng-messages>
         <a class="btn btn-success" ng-click="complete()">mark complete</a>

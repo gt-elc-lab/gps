@@ -1,4 +1,5 @@
 import bson
+import datetime
 import flask
 from flask.views import MethodView
 from flask.ext.httpauth import HTTPBasicAuth
@@ -104,6 +105,7 @@ class ConversationView(MethodView):
         request = flask.request.get_json()
         conversation = Conversation.objects.get(id=request['_id']['$oid'])
         conversation.completed = request['completed']
+        conversation.ended = datetime.datetime.utcnow()
         conversation.save()
         return flask.jsonify(**request)
 

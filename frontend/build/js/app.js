@@ -94,7 +94,6 @@ gps.config(function($httpProvider, $stateProvider, $urlRouterProvider) {
 });
 
 
-
 HomeViewController.$inject = ['$state'];
 function HomeViewController($state) {
 
@@ -110,7 +109,8 @@ function LoginFormController($state, AuthenticationService) {
                 $state.go('app.feed');
             }.bind(this), function(error) {
                 this.Form.$error.authentication = true;
-                this.Form.message = error.message;
+                this.Form.message = error.message ? error.message :
+                    'Looks like something went wrong';
             }.bind(this));
         }
     };
@@ -133,9 +133,12 @@ function RegisterFormController($state, AuthenticationService) {
     };
 }
 
-AppViewController.$inject = ['$state'];
-function AppViewController($state) {
-
+AppViewController.$inject = ['$state', 'AuthenticationService'];
+function AppViewController($state, AuthenticationService) {
+    this.logout = function() {
+        AuthenticationService.logout();
+        $state.go('home');
+    };
 }
 
 FeedViewController.$inject = ['$state', 'PostResource'];
@@ -170,8 +173,8 @@ function CurrentUserService() {
     var currentUser = null;
 
     this.getCurrentUser = function() {
-        return currentUser ? currentUser :
-            {email: "t@test.com", id: "5706fb490dfb5e37fd1304a0"}
+        return currentUser;
+            // {email: "t@test.com", id: "5706fb490dfb5e37fd1304a0"}
     };
 
     this.setCurrentUser = function(user) {
@@ -199,6 +202,10 @@ function AuthenticationService($http, $q, CurrentUserService) {
         CurrentUserService.setCurrentUser(null);
     };
 
+    this.isLoggedIn = function() {
+        return CurrentUserService.getCurrentUser() != null;
+    };
+
     this.register = function(email, password) {
         var deferred = $q.defer();
         var params = {email: email, password: password};
@@ -222,11 +229,11 @@ function HTTPLoadingIndicator($http) {
             $scope.$watch($scope.isLoading, toggleElement);
 
 
-            function toggleElement(loading) {
-                if (loading) {
-                    $element.show();
+            function toggleElement(loaded) {
+                if (loaded) {
+                    $element.removeClass('ng-hide');
               } else {
-                    $element.hide();
+                    $element.addClass('ng-hide');
               }
             }
 
@@ -289,7 +296,7 @@ function FeedPostCard($state, ConversationResource, CurrentUserService) {
                 var conversation = new ConversationResource({r_id: $scope.post._id,
                     user_id: currentUser.id});
                 conversation.$save().then(function(response) {
-
+                    $scope.showMessage('success');
                 }, function(error) {
                     $scope.showMessage('error');
                 });
@@ -322,9 +329,9 @@ function ConversationResource($resource) {
     });
 }
 
-ConversationCard.$inject = ['$state', 'CurrentUserService', 'PostResource',
+ConversationCard.$inject = ['$state', '$timeout', 'CurrentUserService', 'PostResource',
     'ConversationResource'];
-function ConversationCard($state, CurrentUserService, PostResource,
+function ConversationCard($state, $timeout, CurrentUserService, PostResource,
     ConversationResource) {
     return {
         scope: {
@@ -340,8 +347,17 @@ function ConversationCard($state, CurrentUserService, PostResource,
         },
         link: function($scope, $element, $attrs) {
             $scope.messages = {
-                success: false
+                completed: false,
+                reopen: false
             };
+
+            $scope.showMessage = function(message) {
+                $scope.messages[message] = true;
+            };
+
+            $scope.hideMessage = function(message) {
+                $scope.messages[message] = false;
+            }
 
             $scope.post = PostResource.get({_id: $scope.conversation.post});
 
@@ -351,14 +367,28 @@ function ConversationCard($state, CurrentUserService, PostResource,
                     {r_id: $scope.conversation._id.$oid},
                     $scope.conversation)
                 .$promise.then(function(response) {
-                    console.log(response);
+                    $scope.showMessage('completed');
+                    $timeout(function() {
+                        $element.addClass('ng-hide');
+                    }, 3000);
                 }, function(error) {
                     console.log(error);
                 });
             };
 
             $scope.reopen = function() {
-
+                $scope.conversation.completed = false;
+                ConversationResource.update(
+                    {r_id: $scope.conversation._id.$oid},
+                    $scope.conversation)
+                .$promise.then(function(response) {
+                    $scope.showMessage('reopen');
+                    $timeout(function() {
+                        $element.addClass('ng-hide');
+                    }, 3000);
+                }, function(error) {
+                    console.log(error);
+                });
             }
 
         }

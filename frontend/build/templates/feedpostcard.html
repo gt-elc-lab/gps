@@ -18,11 +18,13 @@
             <div
                 ng-message="success"
                 class="alert alert-dismissible alert-success">
-                Nice. This post was added to your tasks.
+                <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                This post was added to your list of ongoing conversations.
             </div>
             <div
                 ng-message="error"
                 class="alert alert-dismissible alert-danger">
+                <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
                 Oops. Looks like someone already accepted this message.
             </div>
         </ng-messages>

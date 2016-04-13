@@ -1,1 +1,22 @@
-<p>Closed</p>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        completed on
+        <span class="text-success">
+            {{conversation.ended.$date | date:"EEEE, MMMM d, h:mm a"}}
+        </span>
+
+    </div>
+    <div class="panel-body">
+        <h4>{{post.title}}</h4>
+        <p>by <a ng-href="https://www.reddit.com/user/{{post.author}}">{{post.author}}</a></p>
+        <p class="show-white-space">{{post.content | limitTo:300}}....<a ng-href="{{post.url}}" target="_blank"> view on reddit</a></p>
+         <ng-messages for="messages">
+            <div
+                ng-message="reopen"
+                class="alert alert-dismissible alert-success">
+                <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>This conversation has been reopened
+            </div>
+        </ng-messages>
+        <a class="btn btn-success" ng-click="reopen()">reopen</a>
+    </div>
+</div>

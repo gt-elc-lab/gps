@@ -61,7 +61,7 @@ class Conversation(Document):
     user = ReferenceField('User')
     post = ReferenceField('Post')
     completed = BooleanField(default=False)
-    started = DateTimeField(default=datetime.datetime.now)
+    started = DateTimeField(default=datetime.datetime.utcnow)
     ended = DateTimeField()
 
 
