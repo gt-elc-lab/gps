@@ -12,6 +12,7 @@ connect(host=config.TEST_DB_URI)
 
 class Post(Document):
     r_id = StringField(primary_key=True)
+    source = StringField(required=True)
     url = StringField()
     author = StringField()
     title = StringField()

@@ -12,7 +12,6 @@ class Classifier(object):
     def classify(submission):
         raise NotImplementedError()
 
-
 class SimpleClassifier(Classifier):
 
     def classify(self, submission):
@@ -27,15 +26,27 @@ def test_classifier(classifier, samples):
         if sample.label == classifier.classify(sample))
     return correct / len(samples)
 
+
 class Crawler(object):
+    """ Super class for all crawlers"""
 
     def __init__(self, classifier):
         self.classifier = classifier
 
-    def run(self, subreddit='depression'):
+    def crawl():
+        """
+        Get data from the relevant source, filter by classification, then save
+        to the database.
+        """
+        raise NotImplementedError()
+
+
+class RedditCrawler(Crawler):
+
+    def crawl(self, subreddit='depression'):
         r = praw.Reddit(user_agent='gthealth')
-        posts = map(Crawler.post_from_praw_submission,
-            r.get_subreddit(subreddit).get_new(limit=20))
+        posts = [self.post_from_praw_submission(post)
+            for post in r.get_subreddit(subreddit).get_new(limit=20)]
         for post in filter(self.classifier.classify, posts):
             post.save()
 
@@ -52,12 +63,20 @@ class Crawler(object):
     @staticmethod
     def post_from_praw_submission(submission):
         return models.Post(r_id=submission.id,
+                           source='reddit',
                            author = submission.author.name,
                            url=submission.permalink,
                            content=submission.selftext,
                            title=submission.title,
                            created=datetime.utcfromtimestamp(
-                            submission.created_utc))
+                            submission.created_utc),)
+
+class YikYakCrawler(Crawler):
+
+    def crawl():
+        pass
+
+
 
 def download_corpus():
     """ Performs a search for depression related posts on all of our subreddits"""
@@ -74,7 +93,7 @@ def download_corpus():
 
 
 if __name__ == '__main__':
-    Crawler(SimpleClassifier()).run()
+    RedditCrawler(SimpleClassifier()).crawl()
     # download_corpus()
     # samples = models.Sample.objects(label__exists=True)
     # print test_classifier(SimpleClassifier(), samples)
