@@ -4,11 +4,12 @@
         <span class="text-info">
             {{conversation.started.$date | date:"EEEE, MMMM d, h:mm a"}}
         </span>
+         <span class="badge float-right label-primary">{{post.source}}</span>
     </div>
     <div class="panel-body">
         <h4>{{post.title}}</h4>
         <p>by <a ng-href="https://www.reddit.com/user/{{post.author}}">{{post.author}}</a></p>
-        <p class="show-white-space">{{post.content | limitTo:300}}....<a ng-href="{{post.url}}" target="_blank"> view on reddit</a></p>
+        <p class="show-white-space">{{post.content | limitTo:300}}....<a ng-href="{{post.url}}" target="_blank"> view on {{post.source}}</a></p>
 
          <ng-messages for="messages">
             <div

@@ -43,7 +43,7 @@ class Crawler(object):
 
 class RedditCrawler(Crawler):
 
-    def crawl(self, subreddit='depression'):
+    def crawl(self, subreddit='gatech'):
         r = praw.Reddit(user_agent='gthealth')
         posts = [self.post_from_praw_submission(post)
             for post in r.get_subreddit(subreddit).get_new(limit=20)]
@@ -73,7 +73,7 @@ class RedditCrawler(Crawler):
 
 class YikYakCrawler(Crawler):
 
-    def crawl():
+    def crawl(self):
         pass
 
 

@@ -3,6 +3,10 @@
 
 <feed-post-card ng-repeat="post in FeedView.posts" post="post">
         </feed-post-card>
+
+<div ng-show="!FeedView.posts.length">
+    <h3 class="text-center">Hmm...looks like no posts have been flagged lately</h3>
+</div>
 <!-- <ul class="pager">
   <li class="previous disabled"><a href="#">&larr; Older</a></li>
   <li class="next"><a href="#">Newer &rarr;</a></li>

@@ -29,6 +29,10 @@
     white-space: pre-wrap;
 }
 
+.float-right {
+    float: right;
+}
+
 /* Template Styles*/
 
 /* Space out content a bit */

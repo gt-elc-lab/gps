@@ -11,12 +11,14 @@ import config
 connect(host=config.TEST_DB_URI)
 
 class Post(Document):
-    r_id = StringField(primary_key=True)
+    # originally used to identify the reddit post, but now used as the default
+    # source specific identifier
+    r_id = StringField(primary_key=True, unique=True)
     source = StringField(required=True)
-    url = StringField()
-    author = StringField()
+    url = StringField(required=True)
+    author = StringField(required=True)
     title = StringField()
-    content = StringField()
+    content = StringField(required=True)
     accepted = BooleanField(default=False)
     completed = BooleanField(default=False)
     discarded = BooleanField(default=False)
@@ -28,6 +30,7 @@ class User(Document):
     password = StringField()
     activation_token = StringField()
     activated = BooleanField(default=False)
+    email_frequency = StringField()
 
     def hash_password(self, password):
         self.password = pwd_context.encrypt(password)

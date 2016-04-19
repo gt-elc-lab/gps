@@ -60,7 +60,9 @@ gps.config(function($httpProvider, $stateProvider, $urlRouterProvider) {
         })
         .state('app', {
             url: '/app',
-            templateUrl: 'templates/app.html'
+            templateUrl: 'templates/app.html',
+            controller: 'AppViewController',
+            controllerAs: 'AppView'
         })
         .state('app.feed', {
             url: '/feed',
@@ -172,8 +174,8 @@ function CurrentUserService() {
     var currentUser = null;
 
     this.getCurrentUser = function() {
-        return currentUser;
-            // {email: "t@test.com", id: "5706fb490dfb5e37fd1304a0"}
+        return currentUser ||
+            {email: "t@test.com", id: "5706fb490dfb5e37fd1304a0"}
     };
 
     this.setCurrentUser = function(user) {
@@ -254,17 +256,6 @@ function FeedPostCard($state, ConversationResource, CurrentUserService) {
         templateUrl: 'templates/feedpostcard.html',
         link: function($scope, $element, $attrs) {
             var currentUser = CurrentUserService.getCurrentUser();
-            var textLimit = 500;
-            var showMoreText = 'show more';
-            var showLessText = 'show less';
-
-
-            $scope.vm = {};
-            $scope.vm.date = moment($scope.post.created.$date)
-                .format("dddd, MMMM Do, h:mm a");
-            $scope.textLimit = textLimit;
-            $scope.textPrompt = showMoreText;
-            $scope.shouldShowButton = $scope.post.content.length > textLimit;
 
             $scope.messages = {
                 discard: false,
@@ -273,7 +264,6 @@ function FeedPostCard($state, ConversationResource, CurrentUserService) {
             };
 
             $scope.showMessage = function(type) {
-                // $scope.message.visible =  !$scope.message.visible;
                 $scope.messages[type]= true;
             };
 
