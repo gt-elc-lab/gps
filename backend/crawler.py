@@ -1,6 +1,7 @@
 import nltk
 from datetime import datetime
 import praw
+from sentiment_analysis import SentimentHelper
 
 import config
 import models
@@ -21,6 +22,40 @@ class SimpleClassifier(Classifier):
                 return True
         return False
 
+class DTClassifier(Classifier):
+    def classify(self, submission):
+        if submission.content.count('depress') <= 0:
+            return False
+        else:
+            if submission.content.count('psychiatry') <= 0:
+                if submission.content.count('suicide') <= 0:
+                    if SentimentHelper.compute_sentiment(submission.content)['neg'] <= 0.073:
+                        return False
+                    else:
+                        if submission.content.count('suicide') <= 0:
+                            if submission.content.count('depress') <= 1:
+                                if submission.content.count('struggle') <= 0:
+                                    if submission.content.count('help') <= 1:
+                                        if submission.content.count('anxiety') <= 0:
+                                            if SentimentHelper.compute_sentiment(submission.content)['pos'] <= 0.107:
+                                                return True
+                                            else:
+                                                return False
+                                        else:
+                                            return False
+                                    else:
+                                        return True
+                                else:
+                                    return True
+                            else:
+                                return True
+                        else:
+                            return False
+                else: 
+                    return True
+            else:
+                return True
+                
 def test_classifier(classifier, samples):
     correct = sum(1.0 for sample in samples
         if sample.label == classifier.classify(sample))
