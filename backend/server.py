@@ -80,4 +80,4 @@ def count():
 application.register_blueprint(api, url_prefix='/api')
 if __name__ == '__main__':
     application.debug = True
-    application.run()
+    application.run('0.0.0.0', 80)

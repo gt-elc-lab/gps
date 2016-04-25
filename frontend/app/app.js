@@ -31,7 +31,7 @@ gps
 gps.config(function($httpProvider, $stateProvider, $urlRouterProvider) {
 
     $httpProvider.interceptors.push(function() {
-        var apiUrl = 'http://localhost:5000';
+        var apiUrl = 'http://ec2-52-207-214-159.compute-1.amazonaws.com';
         return {
             request: function(config) {
                 if (config.url.startsWith('/api')) {
@@ -174,8 +174,7 @@ function CurrentUserService() {
     var currentUser = null;
 
     this.getCurrentUser = function() {
-        return currentUser ||
-            {email: "t@test.com", id: "5706fb490dfb5e37fd1304a0"}
+        return currentUser;
     };
 
     this.setCurrentUser = function(user) {
